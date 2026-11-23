@@ -1,0 +1,20 @@
+# Build output
+build/
+bin/
+*.o
+*.d
+
+# IDE / LSP
+compile_commands.json
+.vscode/
+.idea/
+*.swp
+
+# Test / profiling evidence
+evidence/
+*.log
+vgcore.*
+core
+
+# OS
+.DS_Store
