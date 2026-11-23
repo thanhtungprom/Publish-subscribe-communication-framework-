@@ -1,0 +1,56 @@
+direction: right
+
+publisher: {
+  label: "Publisher (client)"
+  style.fill: "#E8F1FB"
+  style.stroke: "#2E6DA4"
+  main_p: {label: "publisher.c\nteammate"}
+
+  use_p: {
+    label: "common/"
+    style.fill: "#FFF3D6"
+    style.stroke: "#C8941A"
+  }
+
+  main_p -> use_p: {label: "connect_to_server\nframe_header_to_network"}
+}
+
+broker: {
+  label: "Broker / Server"
+  style.fill: "#EAF7EE"
+  style.stroke: "#2E8B57"
+
+  epoll: {label: "server_epoll.c\nepoll_wait loop"}
+  session: {label: "client_session.c\nrx buffer + tx queue"}
+  topic: {label: "topic_manager.c\ntopic -> subscribers"}
+
+  use_s: {
+    label: "common/"
+    style.fill: "#FFF3D6"
+    style.stroke: "#C8941A"
+  }
+
+  epoll -> session: {label: "1. read() bytes"}
+  session -> use_s: {label: "2. parse frame"}
+  session -> topic: {label: "3. PUBLISH"}
+  topic -> session: {label: "4. fan-out DELIVER"}
+  session -> epoll: {label: "5. EPOLLOUT"}
+}
+
+subscriber: {
+  label: "Subscriber (client)"
+  style.fill: "#E8F1FB"
+  style.stroke: "#2E6DA4"
+  main_s: {label: "subscriber.c\nteammate"}
+
+  use_s2: {
+    label: "common/"
+    style.fill: "#FFF3D6"
+    style.stroke: "#C8941A"
+  }
+
+  main_s -> use_s2: {label: "frame_header_to_host\nframe_header_validate"}
+}
+
+publisher.main_p -> broker.epoll: {label: "TCP :9000"}
+broker.session -> subscriber.main_s: {label: "MSG_DELIVER"}
